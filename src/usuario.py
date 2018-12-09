@@ -2,22 +2,16 @@ import sys
 import hashlib
 
 class Usuario:
-    id = 0
-    titulo = ''
-    descricao = ''
-    caminho = ''
-    ip = ''
-    porta = '8050'
-    md5 = ''
+    PORTA = 8050
 
-    def __init__(self, id, titulo, desc, caminho, ip):
+    def _init_(self):
         self.id = id
-        self.titulo = titulo
-        self.descricao = desc
-        self.caminho = caminho
-        self.ip = ip
+        self.titulo = ''
+        self.desc = ''
+        self.caminho = ''
+        self.ip = ''
+        self.porta = 0
 
         h = hashlib.md5()
-        h.update(titulo + desc)
+        h.update(self.titulo + self.desc)
         self.md5 = h.hexdigest()
-        

@@ -6,7 +6,7 @@ import Usuario
 
 class Server(threading.Thread):
 
-    lista = []
+    listaArquivos = []
 
     def run(self):
         self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -26,8 +26,10 @@ class Server(threading.Thread):
             if isinstance(msg, Usuario):
                 uploadArquivo(msg)
                       
-    def uploadArquivo():
-
+    def uploadArquivo(user):
+        Usuario u = (Usuario) user
+        tamanhoLista = len(listaArquivos)
+        
 
 
 
