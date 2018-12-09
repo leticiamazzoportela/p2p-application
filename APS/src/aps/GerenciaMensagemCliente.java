@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +80,17 @@ class GerenciaMensagemCliente extends Thread {
                         break;
                     case 2:
                         out.writeObject(search());
+                        ArrayList<Usuario> arq = (ArrayList<Usuario>) in.readObject();
+                        if(arq.isEmpty()){
+                            System.out.println("\nMensagem recebida do servidor: Nenhum arquivo encontrado!");
+                        }else{
+                            System.out.println("\nEscolha um arquivo dos recebidos: ");
+                            for(Usuario u: arq){
+                                System.out.println(u.getId() + " - " + u.getTitulo());                                
+                            }
+                            int escolha = reader.nextInt();
+                            System.out.println("Escolhido o nº: " + escolha);
+                        }
                     case 3:
                         return;
                     default:

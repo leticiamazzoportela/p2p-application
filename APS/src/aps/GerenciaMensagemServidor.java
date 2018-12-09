@@ -47,8 +47,15 @@ class GerenciaMensagemServidor extends Thread {
         out.writeObject(m);
     }
 
-    public void search(Mensagem men) {
-
+    public void search(Mensagem men) throws IOException {
+        ArrayList<Usuario> envioUsuarios = new ArrayList();
+        String texto = men.getTexto();
+        for(Usuario u: this.arquivos){
+            if(u.getTitulo().contains(texto) || u.getDescricao().contains(texto)){
+                envioUsuarios.add(u);
+            }
+        }        
+        out.writeObject(envioUsuarios);
     }
 
     @Override
