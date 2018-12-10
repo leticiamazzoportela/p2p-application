@@ -38,16 +38,17 @@ public class GerenciaUpload extends Thread {
         }else{
             total = ate;
         }
+        long aux = 0;
         
-        while (enviado < (de + ate)) {
+        while (aux < ate) {
+            System.out.println("\n\n Executar ate: "+ ate);
+            System.out.println("enviado:" + aux);
             if(falta < 1024 && (de + ate) >= 1024){
                 total = falta;
             }
             System.out.println("TOTAL " + total);
             System.out.println("FALTA " + falta);
             
-            System.out.println("enviado: " + enviado);
-            System.out.println("total: " + total);
             byte[] pedaco = new byte[total];
             fis.skip(enviado);
             int read = fis.read(pedaco, 0, pedaco.length);
@@ -62,6 +63,7 @@ public class GerenciaUpload extends Thread {
             System.out.println("Enviado (" + read + ") do arquivo para " + ipOutroUsuario.toString() + ":" + portaUDPOutroUsuario);
             DatagramPacket packet = new DatagramPacket(pedaco, pedaco.length, ipOutroUsuario, portaUDPOutroUsuario);
             socket.send(packet);
+            aux+= packet.getLength();
 
 
             System.out.println("Sending file: " + enviado + "%");

@@ -65,19 +65,22 @@ public class GerenciaDownload extends Thread {
   
         int tamanhoPacote = 1024;
         int lido = this.pos;
+        long aux = 0;
+        long t = tamanho;
         int count = 1;
         System.out.println("Aguardando envio da primeira parte do arquivo");
-        while (lido < (tamanho + this.pos)) {
-            System.out.println("Tamanho Pacote: " + tamanho);
+        while (aux < t) {
+            System.out.println("\n\nTotal a ser lido: " + t);
+            System.out.println("Ja foi lido: "+ aux);
             byte[] buf = new byte[tamanhoPacote];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
 
             byte[] pedaco = packet.getData();
             String tam = new String(pedaco, "UTF-8");
-            System.out.println("\n\nPACOTE RECEBIDO: "+tam+"\n");
             
             if (tam.startsWith("dute")) {
+                System.out.println("\n\nTAMTAMTAM: " + tam);
                 tamanhoPacote = Integer.parseInt(tam.split(",")[1].trim());
             } else {
                 System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
@@ -88,13 +91,12 @@ public class GerenciaDownload extends Thread {
                 
                 ch.write(ByteBuffer.wrap(tam.getBytes()));               
                 
-                System.out.println("Escrito pedaço do arquivo :)");
 
                 System.out.println("Enviando respota OK para " + packet.getAddress() + ":" + packet.getPort());
-               // enviaRespostaOk(packet.getAddress(), packet.getPort());
 
                 count++;
                 lido += packet.getLength();
+                aux += packet.getLength();
                 tamanhoPacote = 1024;
                 System.out.println("Lido (bytes): " + lido);
             }
@@ -104,13 +106,6 @@ public class GerenciaDownload extends Thread {
         fos.close();
     }
 
-    private void enviaRespostaOk(InetAddress ip, int porta) throws IOException {
-        byte[] chunk = "OK".getBytes();
-        DatagramPacket packet = new DatagramPacket(chunk, chunk.length, ip, porta);
-
-        socket.send(packet);
-        System.out.println("Enviado resposta para o outro usuário");
-    }
 
     @Override
     public void run() {
