@@ -108,7 +108,7 @@ class GerenciaMensagemCliente extends Thread {
             }
         }
         int qtdUsuarios = usuariosDownload.size();
-        int qtd = (int) Math.ceil(usuarioEscolhido.getTamanho() / qtdUsuarios);
+        int qtd = (int) Math.ceil(usuarioEscolhido.getTamanho() / qtdUsuarios) - 1;
         long qtdRestante = qtd + (usuarioEscolhido.getTamanho() % qtdUsuarios);
         solicitaArquivo(usuariosDownload, qtd, qtdRestante);
     }

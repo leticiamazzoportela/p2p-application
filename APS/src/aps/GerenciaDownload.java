@@ -64,11 +64,21 @@ public class GerenciaDownload extends Thread {
         int count = 1;
         System.out.println("Aguardando envio da primeira parte do arquivo");
         while (lido < tamanho) {
-            byte[] buf = new byte[1024];
+            byte[] bufP = new byte[1024];
+            DatagramPacket packetP = new DatagramPacket(bufP, bufP.length);
+            socket.receive(packetP);
+
+            byte[] pedaco = packetP.getData();
+            String tamanho = pedaco.toString();
+            int tamanhoPacote = -1;
+            if (tamanho.startsWith("dute")){
+                tamanhoPacote = Integer.parseInt(tamanho.split(",")[1]);
+            }
+            
+            byte[] buf = new byte[tamanhoPacote];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
-
-            byte[] pedaco = packet.getData();
+            
             System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
             System.out.println("Receiving file: " + (count * 100 / parts) + "%");
             

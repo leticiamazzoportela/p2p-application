@@ -29,15 +29,28 @@ public class GerenciaUpload extends Thread {
 
     private void iniciaTransferenciaArquivo(FileInputStream fis) throws IOException {
         int enviado = de;
-        while (enviado < ate) {
-
-            byte[] pedaco = new byte[1024];
-            int read = fis.read(pedaco, enviado, 1024);
+        int total = de + ate;
+        int falta = -1;
+        if(total > 1024){
+            total = 1024;
+            falta = de + ate;
+        }
+        
+       // 2060 sobra 12
+        while (enviado < (de + ate)) {
+            if(falta < 1024 && (de + ate) >= 1024){
+                total = falta;
+            }
+            byte[] pedaco = new byte[total];
+            int read = fis.read(pedaco, enviado, total);
 
             if (read < 0) {
                 System.out.println("File end reached.");
                 break;
             }
+            String t = "dute" + "," + String.valueOf(read);
+            DatagramPacket packetTam = new DatagramPacket(t.getBytes(), t.getBytes().length, ipOutroUsuario, portaUDPOutroUsuario);
+            socket.send(packetTam);
 
             System.out.println("Enviado (" + read + ") do arquivo para " + ipOutroUsuario.toString() + ":" + portaUDPOutroUsuario);
             DatagramPacket packet = new DatagramPacket(pedaco, pedaco.length, ipOutroUsuario, portaUDPOutroUsuario);
@@ -51,6 +64,9 @@ public class GerenciaUpload extends Thread {
             System.out.println("Sending file: " + enviado + "%");
 
             enviado += read;
+            if (total == 1024){
+                falta -= 1024;
+            }
         }
         
         fis.close();
