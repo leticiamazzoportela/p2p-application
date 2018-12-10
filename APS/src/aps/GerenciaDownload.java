@@ -6,11 +6,15 @@
 package aps;
 
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import static java.lang.System.out;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  *
@@ -70,15 +74,29 @@ public class GerenciaDownload extends Thread {
             socket.receive(packet);
 
             byte[] pedaco = packet.getData();
-            String tam = new String(pedaco);
+            String tam = new String(pedaco, "UTF-8");
             System.out.println("\n\nPACOTE RECEBIDO: "+tam+"\n");
+            
             if (tam.startsWith("dute")) {
                 tamanhoPacote = Integer.parseInt(tam.split(",")[1].trim());
             } else {
                 System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
                 System.out.println("Receiving file: " + (count * 100 / parts) + "%");
 
-                fos.write(pedaco, lido, packet.getLength());
+                //fos.write(pedaco, lido, packet.getLength());
+                
+                System.out.println("TAMMMMM : " + tam);
+                System.out.println(ByteBuffer.wrap(tam.getBytes()));
+                
+                
+                FileChannel ch = fos.getChannel();
+                ch.position(lido);
+                ch.write(ByteBuffer.wrap(tam.getBytes()));
+                
+                
+                
+                
+                
                 System.out.println("Escrito pedaço do arquivo :)");
 
                 System.out.println("Enviando respota OK para " + packet.getAddress() + ":" + packet.getPort());
