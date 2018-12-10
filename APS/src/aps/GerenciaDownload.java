@@ -62,7 +62,7 @@ public class GerenciaDownload extends Thread {
 
     public void iniciaTransferencia() throws IOException {
         int parts = (int) Math.ceil(tamanho / 1024.0);
-        System.out.println("parts: " + parts);
+  
         int tamanhoPacote = 1024;
         int lido = this.pos;
         int count = 1;
@@ -81,22 +81,12 @@ public class GerenciaDownload extends Thread {
                 tamanhoPacote = Integer.parseInt(tam.split(",")[1].trim());
             } else {
                 System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
-                System.out.println("Receiving file: " + (count * 100 / parts) + "%");
-
-                //fos.write(pedaco, lido, packet.getLength());
-                
-                System.out.println("TAMMMMM : " + tam);
-                System.out.println(ByteBuffer.wrap(tam.getBytes()));
-                
+                System.out.println("Receiving file: " + (count * 100 / parts) + "%");             
                 
                 FileChannel ch = fos.getChannel();
                 ch.position(lido);
                 
-                ch.write(ByteBuffer.wrap(tam.getBytes()));
-                
-                
-                
-                
+                ch.write(ByteBuffer.wrap(tam.getBytes()));               
                 
                 System.out.println("Escrito pedaço do arquivo :)");
 

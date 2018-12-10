@@ -92,11 +92,6 @@ class GerenciaMensagemCliente extends Thread {
             File file = new File("C:\\Users\\Elaine\\Documents\\GitHub\\p2p-application\\arquivosRecebidos\\" + user.getNome());
             FileOutputStream fos = new FileOutputStream(file);
             
-            System.out.println("OIIIII EU ENTREEEIIIIIII");
-            System.out.println("usuario: "+user.getId());
-            System.out.println("inicia: "+ ultimoByteSolicitado);
-            System.out.println("tamanho: "+ tamanho);
-            
             new GerenciaDownload(user, fos, tamanho, ultimoByteSolicitado)
                 .start();
 
@@ -116,6 +111,9 @@ class GerenciaMensagemCliente extends Thread {
         int qtdUsuarios = usuariosDownload.size();
         int qtd = (int) Math.ceil(usuarioEscolhido.getTamanho() / qtdUsuarios);
         long qtdRestante = qtd + (usuarioEscolhido.getTamanho() % qtdUsuarios);
+        System.out.println("qtd :" + qtd);
+        System.out.println("qtd restante: " + qtdRestante);
+        
         solicitaArquivo(usuariosDownload, qtd, qtdRestante);
     }
 

@@ -31,6 +31,7 @@ public class GerenciaUpload extends Thread {
         int enviado = de;
         int total = de + ate;
         int falta = -1;
+        System.out.println("Solicitado de " + de + " mais " + ate + "bytes");
         if(total >= 1024){
             total = 1024;
             falta = de + ate;
@@ -38,14 +39,12 @@ public class GerenciaUpload extends Thread {
             total = ate;
         }
         
-        System.out.println("CHEGUEI SOLICITANDO: " + de + " até " + ate);
-        
-        
-       // 2060 sobra 12
         while (enviado < (de + ate)) {
             if(falta < 1024 && (de + ate) >= 1024){
                 total = falta;
             }
+            System.out.println("TOTAL " + total);
+            System.out.println("FALTA " + falta);
             
             System.out.println("enviado: " + enviado);
             System.out.println("total: " + total);
@@ -64,10 +63,6 @@ public class GerenciaUpload extends Thread {
             DatagramPacket packet = new DatagramPacket(pedaco, pedaco.length, ipOutroUsuario, portaUDPOutroUsuario);
             socket.send(packet);
 
-            /*if (!esperaRespostaOkParteArquivo(socket)) {
-                // TODO: Volta no loop e reenvia o pedaço
-                continue;
-            }*/
 
             System.out.println("Sending file: " + enviado + "%");
 
@@ -78,19 +73,6 @@ public class GerenciaUpload extends Thread {
         }
         
         fis.close();
-        /*synchronized(main) {
-            main.notify();
-        }*/
-    }
-
-    private boolean esperaRespostaOkParteArquivo(DatagramSocket socket) throws IOException {
-        byte[] buf = new byte[2];
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        System.out.println("Esperando mensagem de respota OK do cliente");
-        socket.receive(packet);
-
-        String message = new String(packet.getData(), 0, packet.getLength());
-        return "OK".equals(message.trim());
     }
 
     @Override
