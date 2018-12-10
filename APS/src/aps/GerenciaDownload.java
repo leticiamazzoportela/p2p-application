@@ -100,8 +100,9 @@ public class GerenciaDownload extends Thread {
                 tamanhoPacote = 1024;
                 System.out.println("Lido (bytes): " + lido);
             }
-
+           System.out.println("AUUUUX1: " + aux);
         }
+        System.out.println("AUUUUX: " + aux);
 
         fos.close();
     }
