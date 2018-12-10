@@ -59,46 +59,46 @@ public class GerenciaDownload extends Thread {
     public void iniciaTransferencia() throws IOException {
         int parts = (int) Math.ceil(tamanho / 1024.0);
         System.out.println("parts: " + parts);
-
+        int tamanhoPacote = 1024;
         int lido = this.pos;
         int count = 1;
         System.out.println("Aguardando envio da primeira parte do arquivo");
         while (lido < tamanho) {
-            byte[] bufP = new byte[1024];
-            DatagramPacket packetP = new DatagramPacket(bufP, bufP.length);
-            socket.receive(packetP);
-
-            byte[] pedaco = packetP.getData();
-            String tamanho = pedaco.toString();
-            int tamanhoPacote = -1;
-            if (tamanho.startsWith("dute")){
-                tamanhoPacote = Integer.parseInt(tamanho.split(",")[1]);
-            }
-            
+            System.out.println("Tamanho Pacote: " + tamanho);
             byte[] buf = new byte[tamanhoPacote];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
-            
-            System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
-            System.out.println("Receiving file: " + (count * 100 / parts) + "%");
-            
-            fos.write(pedaco, lido, packet.getLength());
-            System.out.println("Escrito pedaço do arquivo :)");
-            
-            System.out.println("Enviando respota OK para " + packet.getAddress() + ":" + packet.getPort());
-            enviaRespostaOk(packet.getAddress(), packet.getPort());
-            
-            count++;
-            lido += packet.getLength();
+
+            byte[] pedaco = packet.getData();
+            String tamanho = pedaco.toString();
+
+            if (tamanho.startsWith("dute")) {
+                tamanhoPacote = Integer.parseInt(tamanho.split(",")[1]);
+            } else {
+                System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
+                System.out.println("Receiving file: " + (count * 100 / parts) + "%");
+
+                fos.write(pedaco, lido, packet.getLength());
+                System.out.println("Escrito pedaço do arquivo :)");
+
+                System.out.println("Enviando respota OK para " + packet.getAddress() + ":" + packet.getPort());
+               // enviaRespostaOk(packet.getAddress(), packet.getPort());
+
+                count++;
+                lido += packet.getLength();
+                tamanhoPacote = 1024;
+                System.out.println("Lido (bytes): " + lido);
+            }
+
         }
-        
+
         fos.close();
     }
-    
+
     private void enviaRespostaOk(InetAddress ip, int porta) throws IOException {
         byte[] chunk = "OK".getBytes();
         DatagramPacket packet = new DatagramPacket(chunk, chunk.length, ip, porta);
-        
+
         socket.send(packet);
         System.out.println("Enviado resposta para o outro usuário");
     }
@@ -110,7 +110,7 @@ public class GerenciaDownload extends Thread {
             InetAddress ip = InetAddress.getByName(this.user.getIp());
             DatagramPacket packet = new DatagramPacket(conteudo, conteudo.length, ip, this.user.getPortaUDP());
             socket.send(packet);
-            
+
             System.out.println("Enviado solicitação de download para o outro cliente");
             iniciaTransferencia();
 

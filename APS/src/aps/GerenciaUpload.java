@@ -36,6 +36,7 @@ public class GerenciaUpload extends Thread {
             falta = de + ate;
         }
         
+        
        // 2060 sobra 12
         while (enviado < (de + ate)) {
             if(falta < 1024 && (de + ate) >= 1024){
@@ -56,10 +57,10 @@ public class GerenciaUpload extends Thread {
             DatagramPacket packet = new DatagramPacket(pedaco, pedaco.length, ipOutroUsuario, portaUDPOutroUsuario);
             socket.send(packet);
 
-            if (!esperaRespostaOkParteArquivo(socket)) {
+            /*if (!esperaRespostaOkParteArquivo(socket)) {
                 // TODO: Volta no loop e reenvia o pedaço
                 continue;
-            }
+            }*/
 
             System.out.println("Sending file: " + enviado + "%");
 
