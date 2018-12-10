@@ -31,10 +31,14 @@ public class GerenciaUpload extends Thread {
         int enviado = de;
         int total = de + ate;
         int falta = -1;
-        if(total > 1024){
+        if(total >= 1024){
             total = 1024;
             falta = de + ate;
+        }else{
+            total = ate;
         }
+        
+        System.out.println("CHEGUEI SOLICITANDO: " + de + " até " + ate);
         
         
        // 2060 sobra 12
@@ -42,8 +46,11 @@ public class GerenciaUpload extends Thread {
             if(falta < 1024 && (de + ate) >= 1024){
                 total = falta;
             }
+            
+            System.out.println("enviado: " + enviado);
+            System.out.println("total: " + total);
             byte[] pedaco = new byte[total];
-            int read = fis.read(pedaco, enviado, ate);
+            int read = fis.read(pedaco, enviado, total);
             if (read < 0) {
                 System.out.println("File end reached.");
                 break;
@@ -70,9 +77,9 @@ public class GerenciaUpload extends Thread {
         }
         
         fis.close();
-        synchronized(main) {
+        /*synchronized(main) {
             main.notify();
-        }
+        }*/
     }
 
     private boolean esperaRespostaOkParteArquivo(DatagramSocket socket) throws IOException {
