@@ -70,10 +70,10 @@ public class GerenciaDownload extends Thread {
             socket.receive(packet);
 
             byte[] pedaco = packet.getData();
-            String tamanho = pedaco.toString();
+            String tamanho = new String(pedaco);
 
             if (tamanho.startsWith("dute")) {
-                tamanhoPacote = Integer.parseInt(tamanho.split(",")[1]);
+                tamanhoPacote = Integer.parseInt(tamanho.split(",")[1].trim());
             } else {
                 System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
                 System.out.println("Receiving file: " + (count * 100 / parts) + "%");

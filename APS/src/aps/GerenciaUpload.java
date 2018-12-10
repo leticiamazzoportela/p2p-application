@@ -43,8 +43,7 @@ public class GerenciaUpload extends Thread {
                 total = falta;
             }
             byte[] pedaco = new byte[total];
-            int read = fis.read(pedaco, enviado, total);
-
+            int read = fis.read(pedaco, enviado, ate);
             if (read < 0) {
                 System.out.println("File end reached.");
                 break;

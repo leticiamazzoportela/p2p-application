@@ -83,6 +83,7 @@ class GerenciaMensagemCliente extends Thread {
     public void solicitaArquivo(ArrayList<Usuario> users, int qtd, long qtdRestante) throws SocketException, FileNotFoundException {
         int ultimoByteSolicitado = 0;
         for (int i = 0; i < users.size(); i++) {
+            
             Usuario user = users.get(i);
             long tamanho = qtd;
             if (i == users.size() - 1) {
@@ -90,7 +91,12 @@ class GerenciaMensagemCliente extends Thread {
             }
             File file = new File("C:\\Users\\Elaine\\Documents\\GitHub\\p2p-application\\arquivosRecebidos\\" + user.getNome());
             FileOutputStream fos = new FileOutputStream(file);
-
+            
+            System.out.println("OIIIII EU ENTREEEIIIIIII");
+            System.out.println("usuario: "+user.getId());
+            System.out.println("inicia: "+ ultimoByteSolicitado);
+            System.out.println("tamanho: "+ tamanho);
+            
             new GerenciaDownload(user, fos, tamanho, ultimoByteSolicitado)
                 .start();
 

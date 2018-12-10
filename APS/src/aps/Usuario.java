@@ -29,7 +29,7 @@ public class Usuario implements Serializable {
     private String caminho;
     private String ip;
     private int porta = 8050;
-    private int portaUDP = 9099;
+    private int portaUDP = 9098;
     private String md5;
     private long tamanho;
     private String nome;
