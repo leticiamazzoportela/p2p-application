@@ -91,6 +91,7 @@ public class GerenciaDownload extends Thread {
                 
                 FileChannel ch = fos.getChannel();
                 ch.position(lido);
+                
                 ch.write(ByteBuffer.wrap(tam.getBytes()));
                 
                 
