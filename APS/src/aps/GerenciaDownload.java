@@ -69,9 +69,7 @@ public class GerenciaDownload extends Thread {
         long t = tamanho;
         int count = 1;
         System.out.println("Aguardando envio da primeira parte do arquivo");
-        while (aux < t) {
-            System.out.println("\n\nTotal a ser lido: " + t);
-            System.out.println("Ja foi lido: "+ aux);
+        while (aux < t) {         
             byte[] buf = new byte[tamanhoPacote];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
@@ -80,7 +78,7 @@ public class GerenciaDownload extends Thread {
             String tam = new String(pedaco, "UTF-8");
             
             if (tam.startsWith("dute")) {
-                System.out.println("\n\nTAMTAMTAM: " + tam);
+                System.out.println("\n\n Tamanho do arquivo a ser recebido: " + tam);
                 tamanhoPacote = Integer.parseInt(tam.split(",")[1].trim());
             } else {
                 System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
@@ -100,9 +98,8 @@ public class GerenciaDownload extends Thread {
                 tamanhoPacote = 1024;
                 System.out.println("Lido (bytes): " + lido);
             }
-           System.out.println("AUUUUX1: " + aux);
+        
         }
-        System.out.println("AUUUUX: " + aux);
 
         fos.close();
     }

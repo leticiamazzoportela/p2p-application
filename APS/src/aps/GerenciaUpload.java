@@ -42,16 +42,13 @@ public class GerenciaUpload extends Thread {
         
         fis.skip(enviado);
         while (aux < ate) {
-            System.out.println("\n\n Executar ate: "+ ate);
-            System.out.println("enviado:" + aux);
+
             if(falta < 1024 && (de + ate) >= 1024){
                 total = falta;
             }
-            System.out.println("TOTAL " + total);
-            System.out.println("FALTA " + falta);
-            
+                  
             byte[] pedaco = new byte[total];
-            System.out.println("ENVIADO  " + enviado);
+          
             System.out.println(pedaco.length);
             int read = fis.read(pedaco, 0, pedaco.length);
             if (read < 0) {
@@ -68,8 +65,6 @@ public class GerenciaUpload extends Thread {
             
             aux+= packet.getLength();
             
-            System.out.println("aux" + aux);
-
 
             System.out.println("Sending file: " + enviado + "%");
 
