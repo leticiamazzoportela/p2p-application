@@ -19,7 +19,7 @@ public class Arquivo implements Serializable {
     private String caminho;
     private String ip;
     private int porta = 8050;
-    private int portaUDP = 9090;
+    private int portaUDP = 9094;
     private String md5;
     private long tamanho;
     private String nome;
