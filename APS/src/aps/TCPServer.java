@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class TCPServer {
     
-    public static ArrayList<Usuario> arquivos = new ArrayList();
+    public static ArrayList<Arquivo> arquivos = new ArrayList();
     
     public static void main(String args[]) {
         try {

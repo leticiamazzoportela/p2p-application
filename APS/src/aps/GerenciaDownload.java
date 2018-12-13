@@ -1,43 +1,39 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package aps;
 
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.System.out;
+import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
-/**
- *
- * @author Elaine
- */
 public class GerenciaDownload extends Thread {
+    
+    public int id = 0;
 
-    private Usuario user;
-    private FileOutputStream fos;
-    private long tamanho;
+    private Arquivo arquivo;
+    private final RandomAccessFile raf;
+    public long de;
+    public long ate;
+    public long tamanho;
+    
     private int pos;
     private DatagramSocket socket;
 
-    public GerenciaDownload(Usuario user, FileOutputStream fos, long tamanho, int pos) throws SocketException {
-        this.user = user;
-        this.fos = fos;
-        this.tamanho = tamanho;
-        this.pos = pos;
+    public GerenciaDownload(int id, Arquivo arquivo, RandomAccessFile raf, long de, long ate) throws SocketException {
+        this.id = id;
+        
+        this.arquivo = arquivo;
+        this.raf = raf;
+        this.de = de;
+        this.ate = ate;
+        this.tamanho = this.ate - this.de;
+        // this.pos = pos;
         this.socket = new DatagramSocket();
     }
 
-    public Usuario getUser() {
-        return user;
+    public Arquivo getUser() {
+        return arquivo;
     }
 
     public int getPos() {
@@ -48,76 +44,74 @@ public class GerenciaDownload extends Thread {
         this.pos = pos;
     }
 
-    public void setUser(Usuario user) {
-        this.user = user;
+    public void setUser(Arquivo user) {
+        this.arquivo = user;
     }
 
     public long getTamanho() {
-        return tamanho;
+        return ate;
     }
 
     public void setTamanho(long tamanho) {
-        this.tamanho = tamanho;
+        this.ate = tamanho;
     }
-
-    public void iniciaTransferencia() throws IOException {
-        int parts = (int) Math.ceil(tamanho / 1024.0);
-  
-        int tamanhoPacote = 1024;
-        int lido = this.pos;
-        long aux = 0;
-        long t = tamanho;
-        int count = 1;
-        System.out.println("Aguardando envio da primeira parte do arquivo");
-        while (aux < t) {         
-            byte[] buf = new byte[tamanhoPacote];
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet);
-
-            byte[] pedaco = packet.getData();
-            String tam = new String(pedaco, "UTF-8");
-            
-            if (tam.startsWith("dute")) {
-                System.out.println("\n\n Tamanho do arquivo a ser recebido: " + tam);
-                tamanhoPacote = Integer.parseInt(tam.split(",")[1].trim());
-            } else {
-                System.out.println("Recebido pedaço do arquivo do " + packet.getAddress() + ":" + packet.getPort());
-                System.out.println("Receiving file: " + (count * 100 / parts) + "%");             
-                
-                FileChannel ch = fos.getChannel();
-                ch.position(lido);
-                
-                ch.write(ByteBuffer.wrap(tam.getBytes()));               
-                
-
-                System.out.println("Enviando respota OK para " + packet.getAddress() + ":" + packet.getPort());
-
-                count++;
-                lido += packet.getLength();
-                aux += packet.getLength();
-                tamanhoPacote = 1024;
-                System.out.println("Lido (bytes): " + lido);
-            }
+    
+    private void download() throws IOException {
+        System.out.println("Thread " + id + " precisa receber de " + this.de + " até " + this.ate);
         
+        int tamanhoPacote = 1024;
+        
+        long recebido = this.de;
+        while (recebido < this.ate) {
+            long faltante = this.ate - recebido;
+            if (faltante < tamanhoPacote) {
+                // Quando recebe um pacote menor do que o tamanho original
+                tamanhoPacote = (int) faltante;
+            }
+            
+            System.out.println("Recebido: " + recebido);
+            byte[] buffer = new byte[tamanhoPacote];
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            socket.receive(packet);
+            
+            byte[] pedaco = packet.getData();
+            System.out.println("Tamanho pedaco: " + pedaco.length);
+            System.out.println("Tamanho recebido: " + packet.getLength());
+            
+            System.out.println("Thread " + id + " moveu o ponteiro para " + recebido + " para escrever até");
+            raf.seek(recebido);
+            raf.write(pedaco);
+            
+            enviaRespostaOk(socket);
+            
+            recebido += packet.getLength();
         }
-
-        fos.close();
     }
-
+    
+    private void enviaRespostaOk(DatagramSocket socket) throws IOException {
+        byte[] resposta = "OK".getBytes();
+        InetAddress ip = InetAddress.getByName(this.arquivo.getIp());
+        DatagramPacket packet = new DatagramPacket(resposta, resposta.length, ip, this.arquivo.getPortaUDP());
+        socket.send(packet);
+    }
 
     @Override
     public void run() {
-        byte[] conteudo = (user.getCaminho() + "," + pos + "," + tamanho).getBytes();
+        byte[] conteudo = (arquivo.getCaminho() + "," + this.de + "," + this.ate).getBytes();
         try {
-            InetAddress ip = InetAddress.getByName(this.user.getIp());
-            DatagramPacket packet = new DatagramPacket(conteudo, conteudo.length, ip, this.user.getPortaUDP());
+            InetAddress ip = InetAddress.getByName(this.arquivo.getIp());
+            DatagramPacket packet = new DatagramPacket(conteudo, conteudo.length, ip, this.arquivo.getPortaUDP());
             socket.send(packet);
 
             System.out.println("Enviado solicitação de download para o outro cliente");
-            iniciaTransferencia();
+            
+            download();
 
         } catch (IOException ex) {
             ex.printStackTrace();
+            
+        } finally {
+            System.out.println("Vamos testar isso :D");
         }
     }
 

@@ -5,7 +5,6 @@
  */
 package aps;
 
-import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,7 +13,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,18 +24,18 @@ class GerenciaMensagemServidor extends Thread {
 
     ObjectOutputStream out;
     ObjectInputStream in;
-    ArrayList<Usuario> arquivos;
+    ArrayList<Arquivo> arquivos;
 
     Socket socket;
 
-    public GerenciaMensagemServidor(Socket socket, ArrayList<Usuario> arquivos) throws IOException {
+    public GerenciaMensagemServidor(Socket socket, ArrayList<Arquivo> arquivos) throws IOException {
         this.socket = socket;
         this.out = new ObjectOutputStream(socket.getOutputStream());
         this.in = new ObjectInputStream(socket.getInputStream());
         this.arquivos = arquivos;
     }
 
-    public void upload(Usuario user) throws NoSuchAlgorithmException, UnknownHostException, IOException {
+    public void upload(Arquivo user) throws NoSuchAlgorithmException, UnknownHostException, IOException {
         int tam = this.arquivos.size();
         user.setId(tam);
         Mensagem m = new Mensagem();
@@ -48,9 +46,9 @@ class GerenciaMensagemServidor extends Thread {
     }
 
     public void search(Mensagem men) throws IOException {
-        ArrayList<Usuario> envioUsuarios = new ArrayList();
+        ArrayList<Arquivo> envioUsuarios = new ArrayList();
         String texto = men.getTexto();
-        for(Usuario u: this.arquivos){
+        for(Arquivo u: this.arquivos){
             if(u.getTitulo().contains(texto) || u.getDescricao().contains(texto)){
                 envioUsuarios.add(u);
             }
@@ -65,8 +63,8 @@ class GerenciaMensagemServidor extends Thread {
             while (true) {
                 Object obj = in.readObject();
 
-                if (obj instanceof Usuario) {
-                    upload((Usuario) obj);
+                if (obj instanceof Arquivo) {
+                    upload((Arquivo) obj);
                 } else if (obj instanceof Mensagem) {
                     search((Mensagem) obj);
                 }

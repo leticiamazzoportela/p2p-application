@@ -1,10 +1,5 @@
 package aps;
 
-/**
- * * TCPClient: Cliente para conexao TCP Descricao: Envia uma informacao ao *
- * servidor e recebe confirmações ECHO Ao enviar "PARAR", a conexão é *
- * finalizada.
- */
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;

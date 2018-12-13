@@ -7,10 +7,12 @@ import java.net.InetAddress;
 
 public class GerenciaSolicitacaoArquivo extends Thread {
     
-    private Usuario usuario;
+    private int id = 0;
+    
+    private Arquivo usuario;
     private DatagramSocket socket;
     
-    public GerenciaSolicitacaoArquivo(Usuario usuario, DatagramSocket socket) {
+    public GerenciaSolicitacaoArquivo(Arquivo usuario, DatagramSocket socket) {
         this.usuario = usuario;
         this.socket = socket;
     }
@@ -32,7 +34,9 @@ public class GerenciaSolicitacaoArquivo extends Thread {
     }
     
     private synchronized void iniciaTransferencia(InetAddress ip, int portaUDP, String caminho, int de, int ate) {
-        new GerenciaUpload(this, socket, ip, portaUDP, caminho, de, ate)
+        this.id++;
+        
+        new GerenciaUpload(this.id, this, socket, ip, portaUDP, caminho, de, ate)
             .start();
         
         try {
